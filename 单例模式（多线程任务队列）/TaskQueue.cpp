@@ -7,29 +7,34 @@ TaskQueue* TaskQueue::GetInstance()
 
 bool TaskQueue::IsEmpty()
 {
+	std::unique_lock<std::mutex> lock(mutex);
 	return data.empty();
 }
 
 void TaskQueue::AddTask(int node)
 {
+	std::unique_lock<std::mutex> lock(mutex);
 	data.push(node);
 }
 
-bool TaskQueue::RemoveTask()
+int TaskQueue::RemoveTask()
 {
+	std::unique_lock<std::mutex> lock(mutex);
 	if (!data.empty())
 	{
+		int front = data.front();
 		data.pop();
-		return true;
+		return 	front;
 	}
 	else
 	{
-		return false;
+		return -1;
 	}
 }
 
 int TaskQueue::GetTask()
 {
+	std::unique_lock<std::mutex> lock(mutex);
 	if (data.empty())
 	{
 		return -1;
